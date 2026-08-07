@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ────────────────────────────────────────────────────────────
+   Portsume design tokens — the entire palette lives here.
+   ──────────────────────────────────────────────────────────── */
+:root {
+  --cream: #fff8ef;
+  --ivory: #faf4eb;
+  --blush: #f8ccd6;
+  --peach: #ffd6c2;
+  --powder: #b9e4f4;
+  --sky: #8ed8f8;
+  --butter: #ffe37a;
+  --sage: #bfd8b8;
+  --forest: #157a43;
+  --lavender: #d7c7f4;
+  --coral: #f68d7a;
+  --navy: #24305e;
+  --paper: #ffffff;
+
+  --ink: var(--navy);
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Manrope", system-ui, sans-serif;
+  --font-hand: "Caveat", cursive;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-cream text-navy font-body;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--butter);
+    color: var(--navy);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+  }
+}
+
+@layer components {
+  /* Editorial eyebrow label */
+  .kicker {
+    @apply font-body text-[0.7rem] font-bold uppercase tracking-[0.22em];
+  }
+
+  /* Handwritten annotation */
+  .scribble {
+    font-family: var(--font-hand);
+    @apply font-semibold;
+  }
+
+  /* A paper-like sticker chip */
+  .sticker {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wide;
+    box-shadow: var(--tw-shadow, 0 6px 16px -6px rgba(36, 48, 94, 0.25));
+  }
+
+  /* The Portsume button language: premium stationery, never default */
+  .btn {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-full font-bold transition-all duration-300;
+  }
+  .btn-primary {
+    @apply btn bg-navy text-cream px-7 py-3.5 text-sm;
+    box-shadow: 0 14px 34px -14px rgba(36, 48, 94, 0.55);
+  }
+  .btn-primary:hover {
+    @apply -translate-y-0.5 bg-forest;
+    box-shadow: 0 20px 42px -16px rgba(21, 122, 67, 0.5);
+  }
+  .btn-ghost {
+    @apply btn border-2 border-navy/20 px-7 py-3.5 text-sm text-navy;
+  }
+  .btn-ghost:hover {
+    @apply -translate-y-0.5 border-navy bg-navy/5;
+  }
+  .btn-paper {
+    @apply btn bg-paper text-navy px-6 py-3 text-sm border border-navy/10;
+    box-shadow: 0 10px 24px -12px rgba(36, 48, 94, 0.35);
+  }
+  .btn-paper:hover {
+    @apply -translate-y-0.5 bg-ivory;
+  }
+}
+
+/* ── Layered background depth ─────────────────────────────────
+   Never flat: grain, dotted grids and soft washes per section. */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+}
+
+.dotted-grid {
+  background-image: radial-gradient(rgba(36, 48, 94, 0.14) 1.1px, transparent 1.1px);
+  background-size: 22px 22px;
+}
+
+.notebook-lines {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    rgba(21, 122, 67, 0.22) 27px,
+    rgba(21, 122, 67, 0.22) 28px
+  );
+}
+
+.dot-paper {
+  background-image: radial-gradient(rgba(246, 141, 122, 0.25) 2px, transparent 2px);
+  background-size: 26px 26px;
+}
+
+/* Soft pastel radial wash for hero/dividers */
+.wash {
+  background:
+    radial-gradient(38% 55% at 82% 12%, rgba(184, 228, 244, 0.85), transparent 70%),
+    radial-gradient(32% 44% at 12% 88%, rgba(248, 204, 214, 0.8), transparent 70%),
+    radial-gradient(26% 40% at 55% 105%, rgba(255, 227, 122, 0.55), transparent 70%);
+}
+
+.wash-alt {
+  background:
+    radial-gradient(40% 60% at 8% 15%, rgba(255, 214, 194, 0.9), transparent 70%),
+    radial-gradient(34% 50% at 92% 80%, rgba(215, 199, 244, 0.8), transparent 70%),
+    radial-gradient(24% 40% at 50% 0%, rgba(191, 216, 184, 0.5), transparent 70%);
+}
+
+/* Editorial big-type treatment */
+.display-1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  font-optical-sizing: auto;
+}
+
+.rotate-cards {
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rotate-cards:hover {
+  transform: rotate(0deg) translateY(-6px);
+}
+
+/* Decorative outline circle (drawn by hand feel) */
+.doodle-ring {
+  border: 2.5px dashed var(--navy);
+  border-radius: 50%;
+  opacity: 0.35;
+}
+
+.tape {
+  position: absolute;
+  width: 96px;
+  height: 26px;
+  background: rgba(255, 227, 122, 0.7);
+  transform: rotate(-6deg);
+  box-shadow: 0 2px 6px rgba(36, 48, 94, 0.12);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+.tape-pink { background: rgba(248, 204, 214, 0.85); }
+.tape-blue { background: rgba(185, 228, 244, 0.9); }
+
+/* Marquee band */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 34s linear infinite;
+}
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* Fancy underline for emphasized words */
+.underline-squiggle {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='12' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8 Q 20 2, 40 8 T 80 8 T 120 8 T 160 8 T 200 8' fill='none' stroke='%23F68D7A' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.35em;
+  padding-bottom: 0.18em;
+}
+
+.underline-blob {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='24' viewBox='0 0 220 24' preserveAspectRatio='none'%3E%3Cpath d='M4 20 C 40 6, 80 24, 120 16 C 160 8, 190 16, 216 10' fill='none' stroke='%23FFE37A' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 50% 92%;
+  background-size: 100% 0.5em;
+}
+
+/* Hand-drawn star */
+.star {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: var(--butter);
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+  );
+}
+
+/* Focus visibility, always */
+:focus-visible {
+  outline: 3px solid var(--sky);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
