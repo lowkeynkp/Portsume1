@@ -1,4 +1,7 @@
 import express from "express";
+import path from "node:path";
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import cors from "cors";
 import helmet from "helmet";
 import { config } from "./config/index.js";
@@ -80,10 +83,38 @@ export function createApp() {
     }
   });
 
+  // Serve the built client (single-host production: one URL hosts UI + API +
+  // public portfolio pages). Falls back to index.html so SPA routes work.
+  const clientDist = findClientDist();
+  if (clientDist) {
+    app.use(express.static(clientDist));
+    app.get("*", (req, res, next) => {
+      if (/^\/(v1|files|p)\b/.test(req.path) || req.path === "/health" || req.path.startsWith("/robots") || req.path.startsWith("/sitemap")) {
+        return next();
+      }
+      if (req.accepts("html")) return res.sendFile(path.join(clientDist, "index.html"));
+      return next();
+    });
+  }
+
   app.use((req, res, next) => {
     res.status(404).json({ ok: false, error: { code: "NOT_FOUND", message: `No route for ${req.method} ${req.path}` } });
   });
 
   app.use(errorHandler);
   return app;
+}
+
+/** Locate the built client bundle by walking up from the running module,
+ *  which lives at server/src (tsx) or server/dist/src (compiled). */
+function findClientDist(): string | undefined {
+  let dir = path.dirname(fileURLToPath(import.meta.url));
+  for (let i = 0; i < 6; i++) {
+    const candidate = path.join(dir, "client", "dist");
+    if (existsSync(path.join(candidate, "index.html"))) return candidate;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return undefined;
 }

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: portsume
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node server/dist/src/index.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      # Leave these unset unless you add Supabase/OpenAI credentials:
+      # - key: SUPABASE_URL
+      # - key: SUPABASE_SERVICE_ROLE_KEY
+      # - key: OPENAI_API_KEY
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
