@@ -144,7 +144,7 @@ export interface ResumeStructured {
   volunteer: TimelineEntry[];
 }
 
-export type ThemeId = "editorial" | "developer" | "professional" | "creative";
+export type ThemeId = "editorial" | "developer" | "professional" | "creative" | "studio" | "executive" | "magazine";
 
 export interface PortfolioSEO {
   title: string;

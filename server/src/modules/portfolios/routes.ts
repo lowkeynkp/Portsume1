@@ -14,7 +14,7 @@ const router = Router();
 
 const contentPatch = z.object({
   title: z.string().min(1).max(120).optional(),
-  themeId: z.enum(["editorial", "developer", "professional", "creative"]).optional(),
+  themeId: z.enum(["editorial", "developer", "professional", "creative", "studio", "executive", "magazine"]).optional(),
   accent: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
   content: z.object({}).passthrough().optional(),
   seo: z.object({}).passthrough().optional(),

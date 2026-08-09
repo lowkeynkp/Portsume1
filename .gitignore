@@ -9,3 +9,4 @@ coverage
 .turbo
 .rush
 .data/
+.vercel

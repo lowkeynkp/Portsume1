@@ -53,6 +53,36 @@ export const TEMPLATES: TemplateMeta[] = [
     accent: "#FF5C8A",
     font: "'Space Grotesk', system-ui, sans-serif",
   },
+  {
+    id: "studio",
+    name: "Studio",
+    tagline: "Gallery style",
+    blurb: "Oversized display type, a scrolling skills marquee and asymmetric editorial project rows. Built for illustrators, animators and filmmakers.",
+    bg: "#FAF7F2",
+    ink: "#15110C",
+    accent: "#FF4D2E",
+    font: "'Unbounded', system-ui, sans-serif",
+  },
+  {
+    id: "executive",
+    name: "Executive",
+    tagline: "Recruiter-ready",
+    blurb: "A clean two-column CV layout with a sidebar rail, stat summary and structured sections. Ideal for engineers and business professionals.",
+    bg: "#FFFFFF",
+    ink: "#16233B",
+    accent: "#0F5E7E",
+    font: "'Lora', Georgia, serif",
+  },
+  {
+    id: "magazine",
+    name: "Magazine",
+    tagline: "Cover story",
+    blurb: "A magazine-inspired spread with a masthead, lead story and issue-style numbering. Premium art direction for image-led portfolios.",
+    bg: "#FAF6EF",
+    ink: "#16130E",
+    accent: "#B3210E",
+    font: "'Anton', system-ui, sans-serif",
+  },
 ];
 
 export function templateFor(id: ThemeId): TemplateMeta {

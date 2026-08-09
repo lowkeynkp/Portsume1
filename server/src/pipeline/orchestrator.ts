@@ -170,9 +170,9 @@ export class PipelineOrchestrator {
     this.markStage(job, "parsing", { status: "running", progress: 20, detail: "Extracting text…" });
     await this.persist(job);
 
-    const rawText = await extractText(file.buffer, file.mimeType);
+    const extracted = await extractText(file.buffer, file.mimeType);
     await sleep(250);
-    const cleanText = sanitizeText(rawText);
+    const cleanText = sanitizeText(extracted.text);
     this.markStage(job, "parsing", { status: "done", progress: 100, detail: "Text extracted" });
 
     // ── Normalize ────────────────────────────────────────────
@@ -180,7 +180,7 @@ export class PipelineOrchestrator {
     this.markStage(job, "normalizing", { status: "running", progress: 30, detail: "Detecting sections…" });
     await this.persist(job);
 
-    const { structured, missing, confidence } = structureResume(cleanText);
+    const { structured, missing, confidence } = structureResume(cleanText, extracted.layout);
     await store.saveParsedResume({
       id: uid(),
       fileId: meta.id,

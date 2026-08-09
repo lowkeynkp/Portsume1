@@ -36,7 +36,7 @@ const pdf = await new Promise<Buffer>((resolve, reject) => {
   doc.end();
 });
 
-const text = await extractText(pdf, "application/pdf");
+const { text } = await extractText(pdf, "application/pdf");
 console.log("=== EXTRACTED TEXT ===");
 console.log(JSON.stringify(text, null, 2));
 const { structured } = structureResume(text);

@@ -4,7 +4,7 @@ import { DoodleCircle, Tape } from "../decor";
 const PLANS = [
   {
     name: "Doodle",
-    price: "$0",
+    price: "₹0",
     period: "forever",
     blurb: "For your first portfolio, absolutely free.",
     features: ["1 published portfolio", "All 6 themes", "portsume.app subdomain", "AI polish pass", "Community support"],
@@ -14,7 +14,7 @@ const PLANS = [
   },
   {
     name: "Studio",
-    price: "$8",
+    price: "₹499",
     period: "per month",
     blurb: "For creators who take their presence seriously.",
     features: [

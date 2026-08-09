@@ -33,6 +33,30 @@ export const THEMES: Theme[] = [
     previewColors: ["#FDF3EC", "#FF5C8A", "#6C5CE7"],
     version: 2,
   },
+  {
+    id: "t-studio",
+    slug: "studio",
+    name: "Studio",
+    blurb: "A gallery-style canvas with oversized display type, a scrolling skills marquee and asymmetric editorial project rows. Built for illustrators, animators, photographers and filmmakers.",
+    previewColors: ["#FAF7F2", "#FF4D2E", "#1E2A5A"],
+    version: 1,
+  },
+  {
+    id: "t-executive",
+    slug: "executive",
+    name: "Executive",
+    blurb: "A recruiter-ready CV layout with a dedicated sidebar rail, stat summary and structured sections. Ideal for engineers, managers and business professionals.",
+    previewColors: ["#FFFFFF", "#0F5E7E", "#16233B"],
+    version: 1,
+  },
+  {
+    id: "t-magazine",
+    slug: "magazine",
+    name: "Magazine",
+    blurb: "A magazine-inspired spread with a masthead, lead story, masonry stories and issue-style numbering. Premium art direction for image-led portfolios.",
+    previewColors: ["#FAF6EF", "#B3210E", "#16130E"],
+    version: 1,
+  },
 ] as const;
 
 export const DEFAULT_THEME: ThemeId = "editorial";
