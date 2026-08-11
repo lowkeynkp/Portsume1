@@ -288,7 +288,9 @@ export class SupabaseStore implements Store {
       {
         id: job.id,
         user_id: job.userId,
-        file_id: job.fileId,
+        // A job is created before its file row exists and carries "" until
+        // then; file_id is a uuid column, which rejects the empty string.
+        file_id: job.fileId || null,
         status: job.status,
         current_stage: job.currentStage,
         progress: job.progress,
@@ -308,7 +310,7 @@ export class SupabaseStore implements Store {
     return {
       id: String(row.id),
       userId: String(row.user_id),
-      fileId: String(row.file_id),
+      fileId: row.file_id ? String(row.file_id) : "",
       status: row.status as PipelineJob["status"],
       currentStage: row.current_stage as PipelineJob["currentStage"],
       progress: Number(row.progress),
@@ -330,7 +332,7 @@ export class SupabaseStore implements Store {
     return (data as Rows[]).map((row) => ({
       id: String(row.id),
       userId,
-      fileId: String(row.file_id),
+      fileId: row.file_id ? String(row.file_id) : "",
       status: row.status as PipelineJob["status"],
       currentStage: row.current_stage as PipelineJob["currentStage"],
       progress: Number(row.progress),

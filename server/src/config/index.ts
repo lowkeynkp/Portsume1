@@ -18,7 +18,10 @@ const envSchema = z.object({
 
   SESSION_SECRET: z.string().default("dev-secret-change-me"),
   STORAGE_BUCKET: z.string().default("resumes"),
-  PUBLIC_BASE_URL: z.string().default("http://localhost:8787"),
+  PUBLIC_BASE_URL: z.string().optional(),
+  // Render injects this for every web service; used as the fallback so a
+  // deploy never publishes localhost links just because the var was unset.
+  RENDER_EXTERNAL_URL: z.string().optional(),
   PUBLIC_SUBDOMAIN_ROOT: z.string().default("localhost"),
   MAX_UPLOAD_MB: z.coerce.number().default(15),
 });
@@ -29,6 +32,14 @@ if (!parsed.success) {
 }
 
 const env = parsed.data;
+
+// Published portfolio links are persisted at publish time, so an incorrect
+// base URL is baked into rows rather than merely rendered wrong once.
+const publicBaseUrl = (
+  env.PUBLIC_BASE_URL ??
+  env.RENDER_EXTERNAL_URL ??
+  "http://localhost:8787"
+).replace(/\/+$/, "");
 
 const supabaseSecretKey = env.SUPABASE_SERVICE_ROLE_KEY ?? env.SUPABASE_SECRET_KEY;
 const supabasePublishableKey = env.SUPABASE_ANON_KEY ?? env.SUPABASE_PUBLISHABLE_KEY;
@@ -44,7 +55,7 @@ export const config = {
   corsOrigin: env.CORS_ORIGIN.split(",").map((s) => s.trim()),
   sessionSecret: env.SESSION_SECRET,
   storageBucket: env.STORAGE_BUCKET,
-  publicBaseUrl: env.PUBLIC_BASE_URL,
+  publicBaseUrl,
   publicSubdomainRoot: env.PUBLIC_SUBDOMAIN_ROOT,
   maxUploadBytes: env.MAX_UPLOAD_MB * 1024 * 1024,
   supabase: {
