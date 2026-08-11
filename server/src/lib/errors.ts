@@ -41,7 +41,20 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     res.status(err.status).json({ ok: false, error: { code: err.code, message: err.message, details: err.details } });
     return;
   }
-  const message = err instanceof Error ? err.message : "Unknown error";
-  console.error("Unhandled error:", err);
+  // Supabase (and other SDKs) reject with plain objects carrying message/code/
+  // hint rather than Error instances — read those before giving up, or the
+  // only diagnostic that reaches the client is "Unknown error".
+  const asRecord = typeof err === "object" && err !== null ? (err as Record<string, unknown>) : null;
+  const message =
+    err instanceof Error
+      ? err.message
+      : typeof asRecord?.message === "string"
+        ? asRecord.message
+        : "Unknown error";
+  const detail = asRecord
+    ? { code: asRecord.code, details: asRecord.details, hint: asRecord.hint }
+    : undefined;
+
+  console.error("Unhandled error:", { message, ...detail, raw: err });
   res.status(500).json({ ok: false, error: { code: "INTERNAL", message } });
 }
