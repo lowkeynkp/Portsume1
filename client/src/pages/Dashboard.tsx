@@ -33,7 +33,16 @@ export function Dashboard() {
             setState({ stage: "upload", portfolio: null });
           }
         })
-        .catch(() => setState({ stage: "upload", portfolio: null }));
+        .catch(() => {
+          // request() clears the token on 401; if it's gone the session was
+          // rejected, so send the user back through the auth gate.
+          if (!getToken()) {
+            setAuthed(false);
+            setState({ stage: "auth", portfolio: null });
+            return;
+          }
+          setState({ stage: "upload", portfolio: null });
+        });
     }
   }, []);
 

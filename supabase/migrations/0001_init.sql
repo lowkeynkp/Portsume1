@@ -5,10 +5,13 @@
 
 create extension if not exists "pgcrypto";
 
--- ── Auth bridge ──────────────────────────────────────────────
--- profiles mirrors auth.users so app code never touches auth tables.
+-- ── Users ────────────────────────────────────────────────────
+-- The server issues its own HMAC sessions (lib/session.ts) and generates user
+-- ids with randomUUID, so profiles is standalone — it must NOT reference
+-- auth.users, or every signup fails a foreign-key check. Switch this to
+-- `references auth.users (id)` only if auth moves to Supabase Auth.
 create table if not exists public.profiles (
-  id uuid primary key references auth.users (id) on delete cascade,
+  id uuid primary key default gen_random_uuid(),
   email text not null unique,
   name text not null default '',
   avatar_url text,
@@ -115,14 +118,23 @@ create index if not exists analytics_events_user_type_idx on public.analytics_ev
 create index if not exists analytics_events_portfolio_idx on public.analytics_events (portfolio_id, created_at desc);
 
 -- ── Seed themes ──────────────────────────────────────────────
+-- Must stay in sync with server/src/modules/themes/themeCatalog.ts — portfolios
+-- .theme_id is a foreign key onto themes.slug, so a theme missing here cannot
+-- be selected in the editor.
 insert into public.themes (id, slug, name, blurb, preview_colors, version) values
-  ('t-editorial', 'editorial', 'Editorial', 'Magazine-grade typography, oversized pull quotes and warm paper tones.', array['#FBF6EE','#D9503F','#1C1B19'], 2),
-  ('t-developer', 'developer', 'Developer', 'Terminal-inspired monospace headers, subtle grid and dark theme.', array['#0D1117','#8ED8F8','#E6EDF3'], 2),
-  ('t-professional', 'professional', 'Professional', 'Clean, understated and corporate-ready with a refined serif display.', array['#FFFFFF','#4A7E8E','#1C2B4B'], 2),
-  ('t-creative', 'creative', 'Creative', 'Playful shapes, hand-drawn accents and a vibrant brand feel.', array['#FDF3EC','#FF5C8A','#6C5CE7'], 2)
+  ('t-editorial', 'editorial', 'Editorial', 'Magazine-grade serif typography, oversized pull quotes, numbered sections and a confident editorial grid.', array['#FFF8EF','#24305E','#F68D7A'], 2),
+  ('t-developer', 'developer', 'Developer', 'A dark, terminal-inspired canvas with monospace accents and a project-first timeline.', array['#0F1512','#8ED8F8','#BFD8B8'], 2),
+  ('t-professional', 'professional', 'Professional', 'Clean, minimal and elegant — a refined single-column layout with generous whitespace.', array['#FFFFFF','#1C2B4B','#4A7E8E'], 2),
+  ('t-creative', 'creative', 'Creative', 'Bold gradients, playful cards, big imagery and lively motion.', array['#FDF3EC','#FF5C8A','#6C5CE7'], 2),
+  ('t-studio', 'studio', 'Studio', 'A gallery-style canvas with oversized display type and asymmetric editorial project rows.', array['#FAF7F2','#FF4D2E','#1E2A5A'], 1),
+  ('t-executive', 'executive', 'Executive', 'A recruiter-ready CV layout with a dedicated sidebar rail, stat summary and structured sections.', array['#FFFFFF','#0F5E7E','#16233B'], 1),
+  ('t-magazine', 'magazine', 'Magazine', 'A magazine-inspired spread with a masthead, lead story, masonry stories and issue-style numbering.', array['#FAF6EF','#B3210E','#16130E'], 1)
 on conflict (id) do nothing;
 
 -- ── Row Level Security ───────────────────────────────────────
+-- The server connects with the service role key, which bypasses RLS entirely;
+-- these policies are the safety net for any anon-key client. They key off
+-- auth.uid(), so they deny everything while auth is server-issued HMAC.
 alter table public.profiles enable row level security;
 alter table public.uploaded_files enable row level security;
 alter table public.parsed_resumes enable row level security;

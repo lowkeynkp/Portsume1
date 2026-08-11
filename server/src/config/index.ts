@@ -7,8 +7,12 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
 
   SUPABASE_URL: z.string().optional(),
+  // Supabase renamed its API keys: anon → publishable, service_role → secret.
+  // Accept either spelling so old and new projects both work.
   SUPABASE_ANON_KEY: z.string().optional(),
+  SUPABASE_PUBLISHABLE_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  SUPABASE_SECRET_KEY: z.string().optional(),
 
   OPENAI_API_KEY: z.string().optional(),
 
@@ -26,8 +30,11 @@ if (!parsed.success) {
 
 const env = parsed.data;
 
+const supabaseSecretKey = env.SUPABASE_SERVICE_ROLE_KEY ?? env.SUPABASE_SECRET_KEY;
+const supabasePublishableKey = env.SUPABASE_ANON_KEY ?? env.SUPABASE_PUBLISHABLE_KEY;
+
 /** True when no Supabase credentials are present → server uses the in-memory store. */
-export const isSupabaseMode = Boolean(env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY);
+export const isSupabaseMode = Boolean(env.SUPABASE_URL && supabaseSecretKey);
 
 export const config = {
   env: env.NODE_ENV,
@@ -42,8 +49,8 @@ export const config = {
   maxUploadBytes: env.MAX_UPLOAD_MB * 1024 * 1024,
   supabase: {
     url: env.SUPABASE_URL,
-    anonKey: env.SUPABASE_ANON_KEY,
-    serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+    anonKey: supabasePublishableKey,
+    serviceRoleKey: supabaseSecretKey,
   },
   openai: {
     apiKey: env.OPENAI_API_KEY,

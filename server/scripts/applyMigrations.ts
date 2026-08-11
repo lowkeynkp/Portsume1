@@ -3,9 +3,12 @@
  * otherwise print instructions. Runs migrations idempotently.
  */
 import { readFile, readdir } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const MIGRATIONS_DIR = join(process.cwd(), "..", "..", "supabase", "migrations");
+// Resolve from this file (server/scripts/) rather than cwd, which differs
+// between `npm run db:migrate` at the root and inside the workspace.
+const MIGRATIONS_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "supabase", "migrations");
 
 async function main() {
   const files = (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort();

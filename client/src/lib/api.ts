@@ -32,6 +32,9 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<ApiEnve
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
   const res = await fetch(`${BASE}/v1${path}`, { ...init, headers });
+  // A token the server no longer recognises (restarted in-memory store, rotated
+  // secret) must not linger — drop it so the UI falls back to the auth gate.
+  if (res.status === 401 && token) setToken(null);
   const body = (await res.json().catch(() => null)) as ApiResponse<T> | null;
   if (!body || !body.ok) {
     const message = body && !body.ok ? body.error.message : `Request failed (${res.status})`;
